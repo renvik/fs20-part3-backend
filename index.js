@@ -1,6 +1,5 @@
 
 // Puhelinluettelon BACK-END
-// VAIHE: tehtävä 3.7: valmis
 // importoidaan noden web server -moduuli:
 const { request, response } = require('express')
 const express = require('express')
@@ -103,8 +102,8 @@ const unknownEndpoint = (request, response) => {
 }
 // otetaan middleware käyttöön
 app.use(unknownEndpoint)
-
-const PORT = 3001
+// muutettu ennen herokuun vientiä käyttämän määriteltyä porttia tai porttia 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
