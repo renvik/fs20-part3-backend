@@ -9,12 +9,13 @@ const morgan = require('morgan')
 // otetaan middlewaret käyttöön (cors, json-parseri) 
 app.use(cors())
 app.use(express.json())
-
+// expressin middleware static, jota tarvitaan staattisen sisällön näyttämiseen kuten index.html 
+app.use(express.static('build'))
 // otetaan lokitukseen morgan-middleware käyttöön 'tiny'-formatissa
 app.use(morgan('tiny'))
-app.get('/', function (req, res) {
-  response.send('hello world!')
-})
+//app.get('/', function (req, res) { 
+//  response.send('hello world!')
+//})
 
 let persons = [
   {
