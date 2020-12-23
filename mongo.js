@@ -1,34 +1,47 @@
 const mongoose = require('mongoose')
 
-if (process.argv.length<3) {
-  console.log('give password as argument')
+if (process.argv.length < 3) {
+  console.log('please give a password as an argument')
   process.exit(1)
 }
-
+// first available argument is [2] because 0 and 1 are taken by node and file name etc
 const password = process.argv[2]
 
 const url =
-`mongodb+srv://fullstack:${password}@cluster0.fbtrl.mongodb.net/fs-phonebook?retryWrites=true&w=true`
-//  annettu osoite (pl url): `mongodb+srv://fullstack:${password}@cluster0-fbtrl.mongodb.net/test?retryWrites=true`
-// mongossa näin: mongodb+srv://fullstack:<password>@cluster0.fbtrl.mongodb.net/<dbname>?retryWrites=true&w=majority
-//vaihtoehto: `mongodb+srv://puhelinluettelo:${password}@puhelinluettelo-me0oy.mongodb.net/test?retryWrites=true`
+  `mongodb+srv://fullstack:${password}@cluster0.fbtrl.mongodb.net/phonebook-app?retryWrites=true&w=majority`
+
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
-  important: Boolean,
+// schema ie. person object's attributes
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
 })
+// defining model: mongoose stores person objects to collection Person (collection name is persons)
+const Person = mongoose.model('Person', personSchema)
 
-const Note = mongoose.model('Note', noteSchema)
+if (process.argv.length === 5) {
+  // a constructor (aka model) that creates person objects:
+  // param numbers are in square brackets[]
+  const person = new Person({
+    name: process.argv[3],
+    number: process.argv[4]
+  })
+  // save-method to save the person object in database
+  person.save().then(() => {
+    console.log('a new person saved!')
+    // close database connection:
+    mongoose.connection.close()
+  })
+} else {
+  Person.find({}).then(result => {
+    console.log('phonebook:')
+    result.forEach(person => {
+      console.log(person.name + ' ' + person.number)
+    })
+    mongoose.connection.close()
+  })
+}
 
-const note = new Note({
-  content: 'HTML is Easy',
-  date: new Date(),
-  important: true,
-})
 
-note.save().then(response => {
-  console.log('note saved!')
-  mongoose.connection.close()
-})
+
