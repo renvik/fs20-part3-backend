@@ -1,6 +1,3 @@
-
-// Status: 3.12 kesken, jäin index.js routejen määrittelyyn, seur. ks. URI ja ID:n luonti
-// otetaan person-moduuli käyttöön -> Person-muuttuja saa arvokseen saman olion, jonka moduuli määrittelee
 const express = require('express')
 const app = express()
 require('dotenv').config()
