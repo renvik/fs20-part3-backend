@@ -9,10 +9,11 @@ if (process.argv.length < 3) {
 // first available argument is [2] because 0 and 1 are taken by node and file name etc
 const passwd = process.argv[2]
 
-const url =
-  `mongodb+srv://fullstack:${passwd}@cluster0.fbtrl.mongodb.net/phonebook-app?retryWrites=true&w=majority`
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+const url =
+  `mongodb+srv://fullstack:${passwd}@cluster0.fbtrl.mongodb.net/phonebook-app?retryWrites=true`
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // schema ie. person object's attributes
 const personSchema = new mongoose.Schema({
