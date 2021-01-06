@@ -1,1 +1,1 @@
-sovellus on herokussa osoitteessa https://safe-falls-23119.herokuapp.com/api/persons
+The app is on the Heroku https://safe-falls-23119.herokuapp.com/api/persons

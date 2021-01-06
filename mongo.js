@@ -1,3 +1,5 @@
+// needed deployments: git + github + heroku
+// in progress: 3.13
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
@@ -35,7 +37,7 @@ if (process.argv.length === 5) {
   })
 } else {
   Person.find({}).then(result => {
-    console.log('phonebook:')
+    console.log('names on the phonebook:')
     result.forEach(person => {
       console.log(person.name + ' ' + person.number)
     })

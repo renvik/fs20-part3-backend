@@ -1,21 +1,23 @@
 
+// Status: 3.12 kesken, jäin index.js routejen määrittelyyn
+// Otetaan ympäristömuuttujien määrittelyyn tarkoitettu dotenv käyttöön
+require('dotenv').config()
 // Puhelinluettelon BACK-END
-// importoidaan noden web server -moduuli:
-const { request, response } = require('express')
+// alempi rivi kommentoitu 6.1.
+//const { request, response } = require('express')
+// otetaan person-moduuli käyttöön -> Note-muuttuja saa arvokseen saman olion, jonka moduuli määrittelee
+const Person = require('./models/person')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
-// otetaan middlewaret käyttöön (cors, json-parseri) 
+// otetaan middlewaret käyttöön (cors, json-parseri): 
 app.use(cors())
 app.use(express.json())
 // expressin middleware static, jota tarvitaan staattisen sisällön näyttämiseen kuten index.html 
 app.use(express.static('build'))
 // otetaan lokitukseen morgan-middleware käyttöön 'tiny'-formatissa
 app.use(morgan('tiny'))
-//app.get('/', function (req, res) { 
-//  response.send('hello world!')
-//})
 
 let persons = [
   {
@@ -39,7 +41,7 @@ let persons = [
     number: "39-23-64223122"
   }
 ]
-// tehtävä 3.1: valmis
+// Routes below. tehtävä 3.1: valmis
 app.get('/api/persons', (request, response) => {
   response.send(persons)
 })
@@ -51,17 +53,18 @@ app.get('/info', (request, response) => {
       `<p>Phonebook has info for ${persons.length} people  </p>` + today)
   })
 
-// tehtävä 3.3: id:llä hakeminen, valmis
+// id:llä hakeminen, virheenkäsittely kommentoitu ulos
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
+  Persons.findById(request.params.id).then(note => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
+  // if (person) {
+  //   response.json(person)
+  // } else {
+  //   response.status(404).end()
+  // }
+
 // tehtävä 3.4: poistaminen tietyllä id:llä, valmis
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
@@ -70,41 +73,45 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-// 3.5 ja 3.6 alkaa: henkilön lisääminen ja virheenkäsittely (puuttuu nimi tai numero tai nimi on jo taulukossa)
+// henkilön lisääminen (tuplat ja virheenkäsittely kommentoitu ulos!)
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  const existingDouble = persons.find(person => person.name === body.name)  
+  
+  if (body.name || body.number  === undefined) {
+    return response.status(400).json({ error: 'name or number missing'})
+  }
+  //const existingDouble = persons.find(person => person.name === body.name)  
   
  
-    if (!body.name || !body.number) {
-      return response.status(400).json({
-        error: 'name or number missing'
-      })}
+    // if (!body.name || !body.number) {
+    //   return response.status(400).json({
+    //     error: 'name or number missing'
+    //   })}
 
-    if (existingDouble) {
-      return response.status(400).json({
-        error: 'name already exists'
-    })}
+    // if (existingDouble) {
+    //   return response.status(400).json({
+    //     error: 'name already exists'
+    // })}
 
-// 3.5 ja 3.6 jatkuu: luodaan henkilö jos henkilön tiedot pyynnön mukana ->
-  const person = {
+// luodaan henkilö jos henkilön tiedot pyynnön mukana
+  const person = new Person( {
     id: Math.floor(Math.random() * 100000),
     name: body.name,
     number: body.number
-  }
+  })
 
-  persons = persons.concat(person)
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
-
 // middleware, jolla saadaan virheilmoitus routejen käsittelemättömistä virhetilanteista json-muodossa
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint'})
 }
-// otetaan middleware käyttöön
+// otetaan ko. middleware käyttöön
 app.use(unknownEndpoint)
-// muutettu ennen herokuun vientiä käyttämän määriteltyä porttia tai porttia 3001
-const PORT = process.env.PORT || 3001
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
