@@ -1,5 +1,5 @@
 
-// Status: 3.12 kesken, jäin index.js routejen määrittelyyn, seur. ks. URI ja ID:n luonti mongossa
+// Status: 3.12 kesken, jäin index.js routejen määrittelyyn, seur. ks. URI ja ID:n luonti
 // Otetaan ympäristömuuttujien määrittelyyn tarkoitettu dotenv käyttöön
 require('dotenv').config()
 // Puhelinluettelon BACK-END
