@@ -1,5 +1,5 @@
 
-// Status: 3.12 kesken, jäin index.js routejen määrittelyyn
+// Status: 3.12 kesken, jäin index.js routejen määrittelyyn, seur. ks. URI ja ID:n luonti mongossa
 // Otetaan ympäristömuuttujien määrittelyyn tarkoitettu dotenv käyttöön
 require('dotenv').config()
 // Puhelinluettelon BACK-END
@@ -78,8 +78,8 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   
   if (body.name || body.number  === undefined) {
-    return response.status(400).json({ error: 'name or number missing'})
-  }
+    return response.status(400).json({ error: 'is this showing here?'})
+  }d
   //const existingDouble = persons.find(person => person.name === body.name)  
   
  
