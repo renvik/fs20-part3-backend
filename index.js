@@ -1,14 +1,11 @@
 
 // Status: 3.12 kesken, jäin index.js routejen määrittelyyn, seur. ks. URI ja ID:n luonti
-// Otetaan ympäristömuuttujien määrittelyyn tarkoitettu dotenv käyttöön
-require('dotenv').config()
-// Puhelinluettelon BACK-END
-// alempi rivi kommentoitu 6.1.
-//const { request, response } = require('express')
-// otetaan person-moduuli käyttöön -> Note-muuttuja saa arvokseen saman olion, jonka moduuli määrittelee
-const Person = require('./models/person')
+// otetaan person-moduuli käyttöön -> Person-muuttuja saa arvokseen saman olion, jonka moduuli määrittelee
 const express = require('express')
 const app = express()
+require('dotenv').config()
+const Person = require('./models/person')
+
 const cors = require('cors')
 const morgan = require('morgan')
 // otetaan middlewaret käyttöön (cors, json-parseri): 
