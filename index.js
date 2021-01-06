@@ -74,7 +74,7 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
   
-  if (body.name || body.number  === undefined) {
+  if (body.name || body.number === undefined) {
     return response.status(400).json({ error: 'is this showing here?'})
   }d
   //const existingDouble = persons.find(person => person.name === body.name)  
