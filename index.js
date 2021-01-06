@@ -35,9 +35,11 @@ let persons = [
     number: "39-23-64223122"
   }
 ]
-// Routes below. tehtävä 3.1: valmis
+// Routes below. Get-operation works from back-end
 app.get('/api/persons', (request, response) => {
-  response.send(persons)
+  Person.find({}).then(persons => {
+    response.json(persons.map(person => person.toJSON()))
+  })
 })
 
 // tehtävä 3.2: valmis
@@ -47,10 +49,11 @@ app.get('/info', (request, response) => {
       `<p>Phonebook has info for ${persons.length} people  </p>` + today)
   })
 
-// id:llä hakeminen, virheenkäsittely kommentoitu ulos
+// Get with ID, virheenkäsittely kommentoitu ulos
 app.get('/api/persons/:id', (request, response) => {
-  Persons.findById(request.params.id).then(note => {
-    response.json(person)
+  Person.findById(request.params.id)
+  .then(person => {
+    response.json(person.toJSON)
   })
 })
   // if (person) {
