@@ -49,7 +49,7 @@ app.get('/info', (request, response) => {
       `<p>Phonebook has info for ${persons.length} people  </p>` + today)
   })
 
-// Get with ID, virheenkäsittely kommentoitu ulos
+// Get with ID, does not work yet, virheenkäsittely kommentoitu ulos
 app.get('/api/persons/:id', (request, response) => {
   Person.findById(request.params.id)
   .then(person => {

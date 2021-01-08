@@ -29,7 +29,8 @@ if (process.argv.length === 5) {
     number: process.argv[4]
   })
   // save-method to save the person object in database
-  person.save().then(() => {
+//   kommentoitu 6.1.
+    person.save().then(() => {
     console.log('a new person saved!')
     // close database connection:
     mongoose.connection.close()
