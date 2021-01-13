@@ -35,7 +35,7 @@ let persons = [
     number: "39-23-64223122"
   }
 ]
-// Routes below. Get-operation works from back-end
+// Routes below. Get-operation works.
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons.map(person => person.toJSON()))
@@ -44,54 +44,57 @@ app.get('/api/persons', (request, response) => {
 
 // tehtävä 3.2: valmis
 app.get('/info', (request, response) => {
-    let today = new Date()
-    response.send(
-      `<p>Phonebook has info for ${persons.length} people  </p>` + today)
-  })
-
-// Get with ID, does not work yet, virheenkäsittely kommentoitu ulos
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id)
-  .then(person => {
-    response.json(person.toJSON)
-  })
+  let today = new Date()
+  response.send(
+    `<p>Phonebook has info for ${persons.length} people  </p>` + today)
 })
-  // if (person) {
-  //   response.json(person)
-  // } else {
-  //   response.status(404).end()
-  // }
 
-// tehtävä 3.4: poistaminen tietyllä id:llä, valmis
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+// Find by ID, next-function is for error handling
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+        // jos haettua id:tä ei löydy niin palautetaan status 404
+      } else {
+        response.status(404).end()
+      }
+    })
+    // jos metodin palauttama promise päätyy rejected -tilaan niin palautetaan status 500 ja tulostetaan konsoliin tieto virheestä
+    .catch(error => next(error))
+})
 
-  response.status(204).end()
+//delete by id
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 // henkilön lisääminen (tuplat ja virheenkäsittely kommentoitu ulos!)
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  
+
   if (body.name === undefined) {
-    return response.status(400).json({ error: 'name is missing'})
+    return response.status(400).json({ error: 'name is missing' })
   }
   //const existingDouble = persons.find(person => person.name === body.name)  
-  
- 
-    // if (!body.name || !body.number) {
-    //   return response.status(400).json({
-    //     error: 'name or number missing'
-    //   })}
 
-    // if (existingDouble) {
-    //   return response.status(400).json({
-    //     error: 'name already exists'
-    // })}
 
-// luodaan henkilö jos henkilön tiedot pyynnön mukana
-  const person = new Person( {
+  // if (!body.name || !body.number) {
+  //   return response.status(400).json({
+  //     error: 'name or number missing'
+  //   })}
+
+  // if (existingDouble) {
+  //   return response.status(400).json({
+  //     error: 'name already exists'
+  // })}
+
+  // luodaan henkilö jos henkilön tiedot pyynnön mukana
+  const person = new Person({
     id: Math.floor(Math.random() * 100000),
     name: body.name,
     number: body.number
@@ -101,12 +104,45 @@ app.post('/api/persons', (request, response) => {
     response.json(savedPerson)
   })
 })
+
+// 3.17 number update, ensin pitäisi tutkia onko saman nimistä henkilöä kokoelmassa ja jos löytyy niin päivittää puhelinnumero
+// käytännössä siis find by name ja sitten put
+app.put('/api/persons/:id', (req, res, next) => {
+  const body = req.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(req.params.id, person)
+    .then((updatedPerson) => {
+      res.json(updatedPerson)
+    })
+    .catch((error) => next(error))
+})
+
+
 // middleware, jolla saadaan virheilmoitus routejen käsittelemättömistä virhetilanteista json-muodossa
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint'})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 // otetaan ko. middleware käyttöön
 app.use(unknownEndpoint)
+
+// midleware virheiden käsittelyyn
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
+
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
