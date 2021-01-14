@@ -42,13 +42,17 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-// tehtävä 3.2: valmis
+// info-route, does not work
 app.get('/info', (request, response) => {
-  let today = new Date()
+  Person.count({}, function (err, count) {
   response.send(
-    `<p>Phonebook has info for ${persons.length} people  </p>` + today)
+    `<div>
+    <p>Phonebook has info for ${count} people  </p> 
+    <p>${Date(Date.now).toString()}</p>
+    </div>`
+)
+  })
 })
-
 // Find by ID, next-function is for error handling
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
