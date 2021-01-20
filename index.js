@@ -81,18 +81,15 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  // if (body.name === undefined) {
-  //   return response.status(400).json({ error: 'name is missing' })
-  // }
-
-  // luodaan henkilö jos henkilön tiedot pyynnön mukana
+  // creates a person
   const person = new Person({
-    id: Math.floor(Math.random() * 100000),
+   // id: Math.floor(Math.random() * 100000),
     name: body.name,
     number: body.number
   })
 
-  person.save().then(savedPerson => {
+  person.save()
+  .then(savedPerson => {
     response.json(savedPerson)
   })
   .catch(error => next(error))
@@ -123,7 +120,7 @@ const unknownEndpoint = (request, response) => {
 // otetaan ko. middleware käyttöön
 app.use(unknownEndpoint)
 
-// midleware virheiden käsittelyyn
+// middleware for error handle
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
