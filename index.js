@@ -45,12 +45,12 @@ app.get('/api/persons', (request, response) => {
 // info-route, does not work
 app.get('/info', (request, response) => {
   Person.count({}, function (err, count) {
-  response.send(
-    `<div>
+    response.send(
+      `<div>
     <p>Phonebook has info for ${count} people  </p> 
     <p>${Date(Date.now).toString()}</p>
     </div>`
-)
+    )
   })
 })
 // Find by ID, next-function is for error handling
@@ -81,21 +81,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  if (body.name === undefined) {
-    return response.status(400).json({ error: 'name is missing' })
-  }
-  //const existingDouble = persons.find(person => person.name === body.name)  
-
-
-  // if (!body.name || !body.number) {
-  //   return response.status(400).json({
-  //     error: 'name or number missing'
-  //   })}
-
-  // if (existingDouble) {
-  //   return response.status(400).json({
-  //     error: 'name already exists'
-  // })}
+  // if (body.name === undefined) {
+  //   return response.status(400).json({ error: 'name is missing' })
+  // }
 
   // luodaan henkilö jos henkilön tiedot pyynnön mukana
   const person = new Person({
@@ -107,6 +95,7 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+  .catch(error => next(error))
 })
 
 // 3.17 number update, ensin pitäisi tutkia onko saman nimistä henkilöä kokoelmassa ja jos löytyy niin päivittää puhelinnumero
@@ -140,14 +129,14 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
 }
 
 app.use(errorHandler)
-
-
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

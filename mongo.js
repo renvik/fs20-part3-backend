@@ -1,6 +1,8 @@
 // needed deployments: git + github + heroku
 // in progress: 3.13
 const mongoose = require('mongoose')
+// implements uniqueValidator
+const uniqueValidator = require('mongoose-unique-validator')
 
 if (process.argv.length < 3) {
   console.log('please give a password as an argument')
@@ -14,10 +16,13 @@ const url = `mongodb+srv://fullstack:${passwd}@cluster0.fbtrl.mongodb.net/phoneb
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // schema ie. person object's attributes
+// requires unique name and number
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: { type: String, required: true, unique: true },
+  number: { String, required: true, unique: true }
 })
+// applies uniquevalidator-plugin to personSchema
+personSchema.plugin(uniqueValidator)
 // defining model: mongoose stores person objects to collection Person (collection name is persons)
 const Person = mongoose.model('Person', personSchema)
 
