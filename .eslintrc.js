@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 module.exports = {
     'env': {
         'browser': true,
@@ -11,7 +12,7 @@ module.exports = {
     'rules': {
         'indent': [
             'error',
-            4
+            2
         ],
         'linebreak-style': [
             'error',
@@ -20,6 +21,18 @@ module.exports = {
         'quotes': [
             'error',
             'single'
+        ],
+        'eqeqeq': [
+            'error',
+        ],
+        'arrow-spacing': [
+            'error', { 'before': true, 'after': true }
+        ],
+        'no-trailing-spaces': [
+            'error'
+        ],
+        'object-curly-spacing': [
+            'error', 'always'
         ],
         'semi': [
             'error',

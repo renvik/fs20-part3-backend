@@ -1,13 +1,13 @@
 // mongo-spesicfic code is in this module
 const mongoose = require('mongoose')
 // implements uniqueValidator
-var uniqueValidator = require('mongoose-unique-validator');
+var uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => {
     console.log('connected to MongoDB')
   })
@@ -28,5 +28,5 @@ personSchema.set('toJSON', {
   }
 })
 // applies uniquevalidator-plugin to personSchema
-personSchema.plugin(uniqueValidator);
+personSchema.plugin(uniqueValidator)
 module.exports = mongoose.model('Person', personSchema)
